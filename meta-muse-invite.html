@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="google-site-verification" content="EX2RyhuQ0M_ldKtR56h3KzBSMmM_PUWpEbn2fUveZO0" />
+<title>메타 Muse(뮤즈) 초대 코드 모음 — 랜덤 뽑기 & 30일 자동 관리</title>
+<meta name="description" content="메타 Muse(뮤즈) 초대 코드를 공유하거나 랜덤으로 활성 코드를 뽑으세요. 30일 자동 만료 및 30회 사용 상한으로 다 쓴 코드를 자동 제외합니다." />
+<link rel="icon" type="image/png" href="./assets/brand-icon.png" />
+<link rel="canonical" href="https://rokjin001.github.io/meta-muse-invite.html" />
+<meta property="og:title" content="메타 Muse(뮤즈) 초대 코드 모음 — 랜덤 뽑기 & 30일 자동 관리" />
+<meta property="og:description" content="메타 Muse(뮤즈) 초대 코드를 공유하거나 랜덤으로 활성 코드를 뽑으세요. 30일 자동 만료 및 30회 사용 상한으로 다 쓴 코드를 자동 제외합니다." />
+<meta property="og:image" content="https://rokjin001.github.io/assets/hero-banner.webp" />
+<meta property="og:url" content="https://rokjin001.github.io/meta-muse-invite.html" />
+<meta property="og:type" content="website" />
+<style>
+:root {
+  --bg:#070b15; --bg2:#0c1324; --nav-bg:rgba(9,14,28,0.84);
+  --card:#11192e; --card2:#17223d; --input-bg:#0a1020;
+  --border:#223154; --text:#f1f5f9; --text-soft:#cbd5e1; --muted:#94a3b8;
+  --accent:#6366f1; --accent2:#818cf8; --green:#10b981; --cyan:#0ea5e9; --amber:#f59e0b; --red:#ef4444;
+  --shadow:0 12px 32px rgba(0,0,0,0.32); --radius:18px;
+}
+[data-theme="light"] {
+  --bg:#f6f8fc; --bg2:#eef2f9; --nav-bg:rgba(255,255,255,0.88);
+  --card:#ffffff; --card2:#f1f5f9; --input-bg:#f8fafc;
+  --border:#e2e8f0; --text:#0f172a; --text-soft:#334155; --muted:#64748b;
+  --accent:#4f46e5; --accent2:#6366f1; --green:#059669; --cyan:#0284c7; --amber:#d97706; --red:#dc2626;
+  --shadow:0 10px 28px rgba(15,23,42,0.06);
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; font-family:'Pretendard','Inter','Segoe UI','Malgun Gothic','Hiragino Sans',sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.6; transition:background .2s, color .2s;
+}
+nav {
+  background:var(--nav-bg); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border); padding:11px 20px; position:sticky; top:0; z-index:70;
+}
+.nav-in { max-width:1180px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; }
+.brand { display:flex; align-items:center; gap:10px; font-weight:800; font-size:16.5px; color:var(--text); text-decoration:none; letter-spacing:-0.4px; }
+.brand img { width:30px; height:30px; border-radius:8px; box-shadow:0 4px 12px rgba(99,102,241,0.35); }
+.nav-links { display:flex; gap:4px; flex-wrap:wrap; align-items:center; }
+.nav-links a { color:var(--muted); text-decoration:none; font-size:13px; font-weight:600; padding:6px 11px; border-radius:9px; transition:.15s; }
+.nav-links a:hover, .nav-links a.active { background:rgba(99,102,241,0.14); color:var(--accent2); }
+[data-theme="light"] .nav-links a:hover, [data-theme="light"] .nav-links a.active { color:var(--accent); }
+.nav-controls { display:flex; gap:7px; align-items:center; }
+.ctrl-btn, .ctrl-sel {
+  background:var(--card2); color:var(--text); border:1px solid var(--border);
+  border-radius:9px; padding:6px 10px; font-size:12px; font-weight:600; cursor:pointer;
+}
+.ctrl-btn:hover, .ctrl-sel:hover { border-color:var(--accent); }
+
+.wrap { max-width:1180px; margin:0 auto; padding:28px 20px 72px; }
+
+/* UtilPick-inspired Modern Hero */
+.hero {
+  display:grid; grid-template-columns:1.25fr 0.95fr; gap:28px; align-items:center;
+  background:linear-gradient(145deg, var(--card), var(--bg2));
+  border:1px solid var(--border); border-radius:24px; padding:34px 36px;
+  margin-bottom:26px; box-shadow:var(--shadow); overflow:hidden; position:relative;
+}
+.hero-badge {
+  display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:999px;
+  background:rgba(16,185,129,0.14); color:var(--green); border:1px solid rgba(16,185,129,0.35);
+  font-size:12px; font-weight:700; margin-bottom:14px;
+}
+.hero h1 { margin:0 0 10px; font-size:34px; font-weight:900; letter-spacing:-0.9px; line-height:1.22; }
+.hero-sub { color:var(--muted); margin:0 0 20px; font-size:15px; line-height:1.6; }
+.hero-search {
+  display:flex; align-items:center; gap:10px; background:var(--input-bg);
+  border:1.5px solid var(--border); border-radius:14px; padding:6px 14px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.12);
+}
+.hero-search:focus-within { border-color:var(--accent); box-shadow:0 0 0 4px rgba(99,102,241,0.16); }
+.hero-search input {
+  flex:1; background:transparent; border:none; color:var(--text); font-size:15px; padding:8px 4px; outline:none;
+}
+.hero-art { width:100%; border-radius:16px; border:1px solid var(--border); box-shadow:0 16px 36px rgba(0,0,0,0.35); display:block; }
+
+/* Category Tabs & Pinned Toolbox */
+.cat-bar { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; align-items:center; }
+.cat-pill {
+  background:var(--card); color:var(--muted); border:1px solid var(--border);
+  border-radius:999px; padding:8px 16px; font-size:13px; font-weight:700; cursor:pointer; transition:.15s;
+}
+.cat-pill:hover { border-color:var(--accent); color:var(--text); }
+.cat-pill.active { background:var(--accent); color:#fff; border-color:var(--accent); box-shadow:0 6px 18px rgba(99,102,241,0.35); }
+
+/* Visual 3-Col Tool Cards */
+.tool-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(295px, 1fr)); gap:16px; margin-bottom:28px; }
+.tcard {
+  background:var(--card); border:1px solid var(--border); border-radius:18px; padding:20px;
+  display:flex; flex-direction:column; gap:12px; text-decoration:none; color:var(--text);
+  box-shadow:var(--shadow); transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+  position:relative;
+}
+.tcard:hover { transform:translateY(-4px); border-color:var(--accent); box-shadow:0 16px 34px rgba(99,102,241,0.16); }
+.tcard-top { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+.ticon {
+  width:46px; height:46px; border-radius:13px; display:flex; align-items:center; justify-content:center;
+  font-size:22px; flex-shrink:0;
+}
+.pin-btn {
+  background:var(--card2); border:1px solid var(--border); color:var(--muted);
+  border-radius:8px; width:30px; height:30px; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;
+}
+.pin-btn.pinned { color:#fbbf24; border-color:rgba(251,191,36,0.5); background:rgba(251,191,36,0.12); }
+.tcard-title { font-weight:800; font-size:16px; letter-spacing:-0.3px; }
+.tcard-desc { font-size:13px; color:var(--muted); line-height:1.5; flex:1; }
+.tcard-foot { display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:700; color:var(--accent2); padding-top:6px; border-top:1px solid var(--border); }
+
+.sec-head { display:flex; justify-content:space-between; align-items:center; margin:0 0 14px; flex-wrap:wrap; gap:8px; }
+.sec-head h2 { margin:0; font-size:19px; font-weight:800; letter-spacing:-0.3px; }
+
+/* Standard subpage & widget elements */
+h1 { margin:0 0 10px; font-size:28px; font-weight:800; letter-spacing:-0.5px; }
+.sub { color:var(--muted); margin:0 0 22px; font-size:14.5px; }
+.back-link { display:inline-flex; align-items:center; gap:6px; color:var(--cyan); text-decoration:none; font-size:13px; font-weight:700; margin-bottom:14px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin-bottom:22px; box-shadow:var(--shadow); }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:15px; }
+label { display:flex; flex-direction:column; gap:6px; font-size:12.5px; font-weight:600; color:var(--muted); }
+input, select, textarea { background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-size:13.5px; font-family:inherit; outline:none; }
+input:focus, select:focus, textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(99,102,241,0.15); }
+textarea { width:100%; min-height:200px; font-family:Consolas,monospace; }
+.btn { display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; border:none; padding:10px 16px; border-radius:10px; font-weight:700; font-size:13px; cursor:pointer; text-decoration:none; }
+.btn-ghost { background:var(--card2); color:var(--text); border:1px solid var(--border); }
+.btn-green { background:rgba(16,185,129,0.16); color:var(--green); border:1px solid rgba(16,185,129,0.4); }
+table { width:100%; border-collapse:collapse; font-size:13.5px; margin-top:14px; }
+th, td { padding:11px 10px; border-bottom:1px solid var(--border); text-align:left; }
+th { color:var(--muted); font-size:12px; font-weight:700; }
+.pill { padding:3px 10px; border-radius:999px; font-size:11px; font-weight:700; }
+.p-free { background:rgba(16,185,129,0.16); color:var(--green); }
+.p-paid { background:rgba(14,165,233,0.15); color:var(--cyan); }
+.kpi-val { font-size:25px; font-weight:800; color:var(--green); margin:4px 0; }
+.guide h2 { font-size:18px; margin-top:0; }
+.guide p, .guide li { color:var(--text-soft); font-size:14px; }
+footer { border-top:1px solid var(--border); padding:28px 20px; text-align:center; color:var(--muted); font-size:12.5px; }
+footer a { color:var(--cyan); text-decoration:none; margin:0 10px; font-weight:600; }
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns:1fr; padding:24px 20px; }
+  .hero h1 { font-size:26px; }
+}
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2258730597118874" crossorigin="anonymous"></script>
+</head>
+<body>
+<nav>
+  <div class="nav-in">
+    <a class="brand" href="./index.html"><img src="./assets/brand-icon.png" alt="Logo" /><span id="brandText">AI Cost Radar</span></a>
+    <div class="nav-links"><a href="./index.html" data-slug="index.html" class="">All Tools</a><a href="./token-counter.html" data-slug="token-counter.html" class="">Token Calc</a><a href="./smartmargin.html" data-slug="smartmargin.html" class="">Margin Pro</a><a href="./json-tools.html" data-slug="json-tools.html" class="">JSON</a><a href="./image-compress.html" data-slug="image-compress.html" class="">Image</a><a href="./guide-ai-cost-optimization.html" data-slug="guide-ai-cost-optimization.html" class="">Guide</a></div>
+    <div class="nav-controls">
+      <select id="siteLang" class="ctrl-sel" aria-label="Language">
+        <option value="en">🌐 EN</option>
+        <option value="ko">🇰🇷 한국어</option>
+        <option value="ja">🇯🇵 日本語</option>
+        <option value="es">🇪🇸 ES</option>
+      </select>
+      <button id="themeToggle" class="ctrl-btn" type="button">☀️ Light</button>
+    </div>
+  </div>
+</nav>
+<main class="wrap"><a id="backAllLink" class="back-link" href="./index.html">← Back to All Tools</a>
+<section class="hero" style="margin-bottom:22px">
+  <div>
+    <div class="hero-badge" id="mBadge">🎟️ 30일 자동 보관 · 30회 사용 상한 · 다 쓴 코드 자동 제외</div>
+    <h1 id="mH1">메타 Muse(뮤즈) 초대 코드 모음</h1>
+    <p class="hero-sub" id="mSub">활성 초대 코드를 랜덤으로 뽑아 바로 복사하거나, 내 초대 코드를 공유하세요. 등록된 코드는 <strong>30일간 보관 후 자동 삭제</strong>되며, <strong>30명 사용 또는 소진 신고</strong> 시 목록에서 즉시 제외됩니다.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" type="button" id="btnPickRandom">🎲 랜덤 초대코드 뽑기</button>
+      <a class="btn btn-ghost" href="#submitCard" id="btnGoSubmit">➕ 내 초대코드 등록하기</a>
+    </div>
+  </div>
+  <div>
+    <img src="./assets/muse-invite-banner.webp" alt="Meta Muse Invite Code Hub" class="hero-art" />
+  </div>
+</section>
+
+<section class="card" id="randomResultCard" style="display:none;border-color:var(--accent)">
+  <div class="sec-head">
+    <h2 id="mPickedTitle">🎉 추천 활성 초대 코드</h2>
+    <span class="pill p-free" id="mPickedMeta">남은 기한 D-30</span>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+    <input id="pickedCodeInput" readonly style="flex:1;min-width:220px;font-family:Consolas,monospace;font-size:18px;font-weight:800;letter-spacing:1px" />
+    <button class="btn btn-green" type="button" id="btnCopyPicked">📋 코드 복사</button>
+    <button class="btn btn-ghost" type="button" id="btnMarkUsed">✅ 사용 완료 (+1)</button>
+    <button class="btn btn-ghost" type="button" id="btnReportDead" style="color:var(--red)">🚫 소진/만료 신고</button>
+  </div>
+  <div id="mPickedHint" class="sub" style="margin:10px 0 0;font-size:12.5px">코드를 사용하셨다면 [사용 완료]를 눌러주세요. 30회 도달 시 자동으로 목록에서 숨겨집니다.</div>
+</section>
+
+<section class="card" id="submitCard">
+  <div class="sec-head">
+    <h2 id="mSubmitTitle">➕ 내 메타 Muse 초대 코드 등록</h2>
+    <span class="pill p-paid" id="mActiveCount">활성 코드 0개</span>
+  </div>
+  <form id="museForm" class="grid" style="align-items:end">
+    <label><span id="mLblCode">초대 코드 (Invite Code)</span><input id="inCode" required maxlength="64" placeholder="예: MUSE-XXXX-XXXX" autocomplete="off" /></label>
+    <label><span id="mLblNote">메모 / 닉네임 (선택)</span><input id="inNote" maxlength="40" placeholder="예: 신규 발급 / 빠른 사용 가능" /></label>
+    <button class="btn" type="submit" id="mBtnAdd">등록하기 (30일 보관)</button>
+  </form>
+  <p class="sub" id="mPolicyNote" style="margin:12px 0 0;font-size:12.5px">
+    📌 <strong>자동 정리 정책:</strong> 모든 코드는 등록일로부터 <strong>30일 경과 시 자동 삭제</strong>되며, 누적 사용 <strong>30회 도달</strong> 또는 소진 신고(2회 이상) 시 즉시 비활성화되어 만료된 코드 노출을 방지합니다.
+    *(정적 호스팅 모드: 현재 브라우저 로컬 저장소에서 즉시 동작하며, 공용 DB 연동 시 전 사용자 실시간 공유로 확장 가능합니다.)*
+  </p>
+</section>
+
+<section class="card">
+  <div class="sec-head">
+    <h2 id="mListTitle">📋 활성 초대 코드 목록 (30일 미만 · 30회 미만만 표시)</h2>
+    <button class="btn btn-ghost" type="button" id="btnShuffleList">🔀 순서 섞기</button>
+  </div>
+  <div style="overflow-x:auto">
+    <table>
+      <thead><tr><th>초대 코드</th><th>메모</th><th>사용 현황 (최대 30회)</th><th>남은 보관 기간</th><th>동작</th></tr></thead>
+      <tbody id="museTbody"></tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card guide">
+  <h2>메타 Muse 초대 코드 이용 및 관리 가이드</h2>
+  <p>초대 코드는 발행 후 일정 기간이 지나거나 최대 사용 횟수(30명)를 채우면 더 이상 사용할 수 없게 됩니다. 본 페이지는 <strong>30일 자동 만료(TTL)</strong>와 <strong>30회 사용 상한 필터</strong>를 적용해 이미 소진된 코드가 반복 노출되는 불편함을 줄였습니다.</p>
+  <ul>
+    <li><strong>공정한 노출:</strong> [랜덤 초대코드 뽑기]는 아직 기한과 사용 횟수가 남은 활성 코드 중 하나를 무작위로 추천합니다.</li>
+    <li><strong>소진 코드 즉시 제거:</strong> 코드를 입력했을 때 이미 만료되었다면 [소진 신고]를 눌러 다른 사용자가 헛걸음하지 않도록 도와주세요.</li>
+  </ul>
+</section>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'acr_meta_muse_codes_v1';
+  const MAX_DAYS = 30;
+  const MAX_USES = 30;
+  const MAX_REPORTS = 2;
+  const DAY_MS = 86400000;
+  // Optional shared backend endpoint (e.g. Cloudflare Worker / Supabase REST) — leave empty for zero-cost local mode
+  const SHARED_API_URL = '';
+
+  let items = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  let pickedId = null;
+
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  function pruneExpired() {
+    const now = Date.now();
+    const before = items.length;
+    items = items.filter(it => {
+      const ageDays = (now - Number(it.createdAt || 0)) / DAY_MS;
+      return ageDays < MAX_DAYS && Number(it.uses || 0) < MAX_USES && Number(it.reports || 0) < MAX_REPORTS;
+    });
+    if (items.length !== before) save();
+  }
+
+  function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
+
+  function daysLeft(createdAt) {
+    const left = Math.ceil(MAX_DAYS - ((Date.now() - Number(createdAt || Date.now())) / DAY_MS));
+    return Math.max(0, left);
+  }
+
+  function render() {
+    pruneExpired();
+    document.getElementById('mActiveCount').textContent = `활성 코드 ${items.length}개`;
+    const tbody = document.getElementById('museTbody');
+    if (!items.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="color:var(--muted)">현재 등록된 활성 초대 코드가 없습니다. 위 입력창에 첫 번째 초대 코드를 등록해 보세요!</td></tr>';
+      return;
+    }
+    tbody.innerHTML = items.map(it => {
+      const dl = daysLeft(it.createdAt);
+      const pct = Math.min(100, Math.round((it.uses / MAX_USES) * 100));
+      return `<tr>
+        <td><code style="font-size:14px;font-weight:800;color:var(--cyan)">${esc(it.code)}</code></td>
+        <td style="color:var(--muted)">${esc(it.note || '-')}</td>
+        <td>
+          <strong>${it.uses} / ${MAX_USES}</strong>
+          <div style="height:6px;width:96px;background:var(--input-bg);border-radius:999px;overflow:hidden;margin-top:3px">
+            <div style="height:100%;width:${pct}%;background:${pct>=80?'var(--amber)':'var(--green)'}"></div>
+          </div>
+        </td>
+        <td><span class="pill p-free">D-${dl}</span></td>
+        <td style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-green" style="padding:5px 10px;font-size:12px" onclick="museCopy('${it.id}')">복사</button>
+          <button class="btn btn-ghost" style="padding:5px 10px;font-size:12px" onclick="museUse('${it.id}')">사용(+1)</button>
+          <button class="btn btn-ghost" style="padding:5px 10px;font-size:12px;color:var(--red)" onclick="museReport('${it.id}')">소진신고</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  window.museCopy = (id) => {
+    const it = items.find(x => x.id === id);
+    if (!it) return;
+    navigator.clipboard.writeText(it.code);
+    alert('초대 코드가 복사되었습니다: ' + it.code);
+  };
+  window.museUse = (id) => {
+    const it = items.find(x => x.id === id);
+    if (!it) return;
+    it.uses = Number(it.uses || 0) + 1;
+    save(); render();
+    if (pickedId === id && it.uses >= MAX_USES) document.getElementById('randomResultCard').style.display = 'none';
+  };
+  window.museReport = (id) => {
+    const it = items.find(x => x.id === id);
+    if (!it) return;
+    it.reports = Number(it.reports || 0) + 1;
+    save(); render();
+    if (pickedId === id && it.reports >= MAX_REPORTS) document.getElementById('randomResultCard').style.display = 'none';
+  };
+
+  document.getElementById('museForm').onsubmit = (e) => {
+    e.preventDefault();
+    pruneExpired();
+    const code = document.getElementById('inCode').value.trim();
+    const note = document.getElementById('inNote').value.trim();
+    if (code.length < 4) { alert('올바른 초대 코드를 입력해 주세요.'); return; }
+    if (items.some(x => x.code.toLowerCase() === code.toLowerCase())) { alert('이미 등록되어 있는 초대 코드입니다.'); return; }
+    items.unshift({ id: crypto.randomUUID(), code, note, uses: 0, reports: 0, createdAt: Date.now() });
+    save(); render();
+    e.target.reset();
+  };
+
+  document.getElementById('btnPickRandom').onclick = () => {
+    pruneExpired();
+    if (!items.length) { alert('현재 활성화된 초대 코드가 없습니다. 먼저 코드를 등록해 주세요!'); return; }
+    const pick = items[Math.floor(Math.random() * items.length)];
+    pickedId = pick.id;
+    document.getElementById('pickedCodeInput').value = pick.code;
+    document.getElementById('mPickedMeta').textContent = `사용 ${pick.uses}/${MAX_USES} · 남은 보관 D-${daysLeft(pick.createdAt)}`;
+    document.getElementById('randomResultCard').style.display = 'block';
+    document.getElementById('randomResultCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  document.getElementById('btnCopyPicked').onclick = () => { if (pickedId) window.museCopy(pickedId); };
+  document.getElementById('btnMarkUsed').onclick = () => {
+    if (!pickedId) return;
+    window.museUse(pickedId);
+    const it = items.find(x => x.id === pickedId);
+    if (it) document.getElementById('mPickedMeta').textContent = `사용 ${it.uses}/${MAX_USES} · 남은 보관 D-${daysLeft(it.createdAt)}`;
+  };
+  document.getElementById('btnReportDead').onclick = () => { if (pickedId) window.museReport(pickedId); };
+  document.getElementById('btnShuffleList').onclick = () => {
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+    render();
+  };
+
+  render();
+})();
+</script>
+</main>
+<footer>
+  <div id="footerTagline">© 2026 AI Cost Radar — 100% Client-Side Free Utilities · Zero Server Upload</div>
+  <div style="margin-top:8px">
+    <a href="./index.html">Home</a>
+    <a href="./about.html">About</a>
+    <a href="./privacy.html">Privacy Policy</a>
+    <a href="./sitemap.xml">Sitemap</a>
+  </div>
+</footer>
+
+<script>
+(function() {
+  const savedTheme = localStorage.getItem('acr_theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  const btn = document.getElementById('themeToggle');
+  function syncThemeBtn(t) { if (btn) btn.textContent = t === 'dark' ? '☀️ Light' : '🌙 Dark'; }
+  syncThemeBtn(savedTheme);
+  if (btn) {
+    btn.addEventListener('click', () => {
+      const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('acr_theme', next);
+      syncThemeBtn(next);
+    });
+  }
+
+  const NAV_I18N = {
+    en: { brand:'AI Cost Radar', 'index.html':'All Tools', 'token-counter.html':'Token Calc', 'smartmargin.html':'Margin Pro', 'json-tools.html':'JSON', 'image-compress.html':'Image', 'guide-ai-cost-optimization.html':'Guide', back:'← Back to All Tools', foot:'100% Client-Side Free Utilities · Zero Server Upload' },
+    ko: { brand:'AI 코스트 레이더', 'index.html':'전체 도구함', 'token-counter.html':'토큰 계산기', 'smartmargin.html':'마진 분석기', 'json-tools.html':'JSON', 'image-compress.html':'이미지 압축', 'guide-ai-cost-optimization.html':'가이드', back:'← 전체 도구함으로 돌아가기', foot:'100% 브라우저 오프라인 무료 도구 · 데이터 외부 전송 없음' },
+    ja: { brand:'AI コストレーダー', 'index.html':'ツール一覧', 'token-counter.html':'トークン', 'smartmargin.html':'利益率分析', 'json-tools.html':'JSON', 'image-compress.html':'画像圧縮', 'guide-ai-cost-optimization.html':'ガイド', back:'← ツール一覧へ戻る', foot:'100%クライアント処理・無料オンラインツール' },
+    es: { brand:'AI Cost Radar', 'index.html':'Herramientas', 'token-counter.html':'Tokens', 'smartmargin.html':'Margen', 'json-tools.html':'JSON', 'image-compress.html':'Imagen', 'guide-ai-cost-optimization.html':'Guía', back:'← Volver a Herramientas', foot:'Herramientas Gratuitas 100% Locales · Privacidad Total' }
+  };
+  const PHRASE_I18N = {
+    ko: {
+      'Daily Requests / Agent Calls':'일일 API 호출 수', 'Avg Input Tokens / Call':'호출당 평균 입력 토큰', 'Avg Output Tokens / Call':'호출당 평균 출력 토큰', 'Filter':'필터', 'All Models':'전체 모델', 'Free Tier Available Only':'무료 티어 지원만', 'Provider':'공급자', 'Model':'모델', 'Input / 1M':'입력 / 100만', 'Output / 1M':'출력 / 100만', 'Tier':'구분', 'Est. Monthly Cost':'예상 월 비용', 'Best For':'추천 용도',
+      'Select Image (PNG / JPG / WebP)':'이미지 선택 (PNG / JPG / WebP)', 'Output Format':'출력 형식', 'Quality (10% - 100%)':'압축 품질 (10% - 100%)', 'Choose an image file to compress instantly.':'압축할 이미지 파일을 선택하면 즉시 변환됩니다.', '⬇ Download Compressed Image':'⬇ 압축된 이미지 다운로드',
+      'Beautify (2 spaces)':'보기 좋게 정렬 (2칸)', 'Minify':'한 줄 압축', 'Generate TypeScript':'TypeScript 타입 생성', 'Generate Python Dataclass':'Python 데이터클래스 생성',
+      'Target Annual Net Income ($)':'목표 연 순수입 ($)', 'Annual Business Expenses ($)':'연간 사업 경비 ($)', 'Effective Tax Rate (%)':'예상 실효 세율 (%)', 'Billable Hours / Week':'주당 청구 가능 시간', 'Working Weeks / Year':'연간 근무 주수', 'Required Gross Revenue':'필요 연 매출', 'Minimum Hourly Rate':'최소 시간당 단가', 'Day Rate (8h)':'일당 (8시간)', 'Monthly Revenue Target':'월 목표 매출',
+      'Estimated Tokens':'예상 토큰 수', 'Characters':'글자수', 'Words':'단어수', 'Sentences':'문장 수', 'Est. Reading Time':'예상 읽기 시간', 'Top Keywords & Density':'핵심 키워드 및 밀도', 'Length':'길이', 'Format':'형식', 'Generate New Secret':'새 키/비밀번호 생성', 'Copy to Clipboard':'클립보드 복사',
+      'Encode to Base64':'Base64 인코딩', 'Decode from Base64':'Base64 디코딩', 'Use Current Time':'현재 시각 입력', 'Generate UUIDs':'UUID 대량 생성', 'Copy All':'전체 복사',
+      'Gross Revenue':'총 매출액', 'Net Profit':'순이익', 'Fees + Shipping':'수수료 + 배송비', 'Est. VAT & ROAS':'예상 부가세 / ROAS', 'Currency':'통화', 'Tax / VAT':'세율 / 부가세',
+      'Practical Engineering Guide':'실전 개발·운영 가이드', 'How to Reduce Your AI API Bill by 60–90%':'AI API 비용을 60~90% 절감하는 핵심 전략'
+    },
+    ja: {
+      'Daily Requests / Agent Calls':'1日のAPI呼び出し回数', 'Provider':'プロバイダー', 'Model':'モデル', 'Est. Monthly Cost':'推定月額コスト', 'Best For':'最適な用途',
+      'Select Image (PNG / JPG / WebP)':'画像を選択', 'Output Format':'出力形式', 'Quality (10% - 100%)':'品質 (10% - 100%)', 'Estimated Tokens':'推定トークン数', 'Characters':'文字数', 'Words':'単語数', 'Practical Engineering Guide':'実践エンジニアリングガイド'
+    },
+    es: {
+      'Daily Requests / Agent Calls':'Llamadas diarias', 'Provider':'Proveedor', 'Model':'Modelo', 'Est. Monthly Cost':'Costo Mensual Est.', 'Best For':'Ideal Para',
+      'Select Image (PNG / JPG / WebP)':'Seleccionar Imagen', 'Output Format':'Formato', 'Quality (10% - 100%)':'Calidad', 'Estimated Tokens':'Tokens Estimados', 'Characters':'Caracteres', 'Words':'Palabras', 'Practical Engineering Guide':'Guía Práctica'
+    }
+  };
+  const PAGE_I18N = {
+    'token-counter.html': { ko: { h1:'🔢 LLM 토큰 카운터 & 프롬프트 비용 계산기', sub:'프롬프트나 코드를 붙여넣으면 예상 토큰 수와 14개 최신 AI 모델별 비용을 즉시 계산합니다.' }, ja: { h1:'🔢 LLMトークンカウンター', sub:'テキストを貼り付けてトークン数とAPI費用を即時計算。' }, es: { h1:'🔢 Contador de Tokens LLM', sub:'Calcula tokens estimados y costo en 14 modelos.' } },
+    'smartmargin.html': { ko: { h1:'📊 SmartMargin Pro — 멀티마켓 마진·부가세 분석기', sub:'스마트스토어·쿠팡·쇼피파이·아마존 CSV 정산을 100% 오프라인으로 1초 분석합니다.' }, ja: { h1:'📊 SmartMargin Pro — EC利益率分析', sub:'CSV決済データから純利益・手数料・赤字SKUを即時分析。' }, es: { h1:'📊 SmartMargin Pro — Margen Neto', sub:'Analiza CSV de Shopify, Amazon y Etsy sin conexión.' } },
+    'json-tools.html': { ko: { h1:'🧩 JSON 포매터 · 검증기 & 스키마 생성기', sub:'JSON 정렬·검증 및 TypeScript·Python 데이터클래스를 오프라인에서 즉시 생성합니다.' }, ja: { h1:'🧩 JSON整形＆スキーマ生成', sub:'JSONの整形・検証と型定義を自動生成。' }, es: { h1:'🧩 Formateador JSON y Esquemas', sub:'Formatea JSON y genera interfaces TS y Python.' } },
+    'regex-tester.html': { ko: { h1:'🔍 실시간 정규식(Regex) 테스터', sub:'정규표현식 매칭 하이라이트와 이메일·URL·휴대폰 프리셋을 즉시 테스트하세요.' }, ja: { h1:'🔍 正規表現テスター', sub:'リアルタイムで一致箇所をハイライト確認。' }, es: { h1:'🔍 Probador Regex en Vivo', sub:'Prueba patrones regex con resaltado en tiempo real.' } },
+    'word-counter.html': { ko: { h1:'📝 글자수 · 읽기 시간 & SEO 키워드 분석기', sub:'글자수, 단어수, 문장 수, 예상 읽기 시간과 상위 SEO 키워드 밀도를 분석합니다.' }, ja: { h1:'📝 文字数・SEO密度分析', sub:'記事の文字数・読了時間・キーワード密度を分析。' }, es: { h1:'📝 Contador de Palabras y SEO', sub:'Analiza longitud, tiempo de lectura y densidad SEO.' } },
+    'freelance-calc.html': { ko: { h1:'💼 프리랜서 시급 · 일당 · 세후 소득 계산기', sub:'세금·경비·비청구 시간을 반영해 목표 순수입 달성 단가를 산출합니다.' }, ja: { h1:'💼 フリーランス適正単価計算', sub:'税金・経費を考慮した適正時給・日当を算出。' }, es: { h1:'💼 Calculadora de Tarifa Freelance', sub:'Calcula tu tarifa mínima descontando impuestos.' } },
+    'image-compress.html': { ko: { h1:'🖼️ 100% 오프라인 이미지 압축 & WebP 변환기', sub:'서버 전송 없이 브라우저에서 PNG·JPG 용량을 최대 80% 줄여 WebP/JPEG로 변환합니다.' }, ja: { h1:'🖼️ オフライン画像圧縮＆WebP変換', sub:'ブラウザ内でPNG/JPGを高速圧縮変換。' }, es: { h1:'🖼️ Compresor de Imágenes Offline', sub:'Comprime PNG/JPG a WebP sin subir archivos.' } },
+    'password-gen.html': { ko: { h1:'🔐 암호학적 비밀번호 & API 키 생성기', sub:'Web Crypto API로 안전한 비밀번호, HEX 시크릿, URL 토큰을 로컬 생성합니다.' }, ja: { h1:'🔐 暗号キー・パスワード生成', sub:'Web Crypto APIで安全なパスワードやAPIキーを生成。' }, es: { h1:'🔐 Generador de Claves API', sub:'Genera contraseñas y claves seguras localmente.' } },
+    'base64-tool.html': { ko: { h1:'🧬 Base64 인코더 & 디코더 (UTF-8 한글 지원)', sub:'한글·유니코드 문자열을 오프라인에서 즉시 Base64로 인코딩/디코딩합니다.' }, ja: { h1:'🧬 Base64 UTF-8 変換ツール', sub:'UTF-8文字列を安全にBase64変換。' }, es: { h1:'🧬 Base64 UTF-8 Sin Conexión', sub:'Codifica y decodifica Base64 con soporte UTF-8.' } },
+    'timestamp-converter.html': { ko: { h1:'⏱️ Unix 타임스탬프 & ISO-8601 날짜 변환기', sub:'Unix Epoch 초/밀리초를 UTC·한국 시간·ISO 날짜로 즉시 변환합니다.' }, ja: { h1:'⏱️ Unixタイムスタンプ変換', sub:'エポック秒/ミリ秒をUTC・ローカル日時へ変換。' }, es: { h1:'⏱️ Conversor Timestamp Unix', sub:'Convierte Unix epoch a UTC e ISO-8601.' } },
+    'uuid-generator.html': { ko: { h1:'🆔 UUID v4 & 대량 GUID 생성기', sub:'Web Crypto 보안 난수로 충돌 없는 UUID v4를 최대 100개까지 한 번에 생성합니다.' }, ja: { h1:'🆔 UUID v4 一括生成ツール', sub:'安全なUUID v4を最大100個まとめて生成。' }, es: { h1:'🆔 Generador Masivo UUID v4', sub:'Genera hasta 100 UUID v4 seguros en 1 clic.' } },
+    'guide-ai-cost-optimization.html': { ko: { h1:'📚 2026 AI API 비용 80% 절감 실전 아키텍처 가이드', sub:'4단계 모델 라우팅, SQLite 응답 캐싱, 예산 서킷 브레이커 실전 설계.' }, ja: { h1:'📚 2026 AI APIコスト80%削減ガイド', sub:'モデルルーティングとキャッシュ戦略の実践解説。' }, es: { h1:'📚 Guía 2026: Reduce 80% tu Factura IA', sub:'Enrutamiento de modelos, caché SQLite y límites.' } }
+  };
+
+  const curSlug = (location.pathname.split('/').pop() || 'index.html');
+  const origH1 = document.querySelector('main h1') ? document.querySelector('main h1').textContent : '';
+  const origSub = document.querySelector('main .sub') ? document.querySelector('main .sub').textContent : '';
+  const origNodes = [];
+  document.querySelectorAll('main label, main button, main th, main h2, main h3, main .btn, main #imgInfo').forEach(el => {
+    el.childNodes.forEach(n => { if (n.nodeType === 3 && n.textContent.trim()) origNodes.push([n, n.textContent.trim()]); });
+  });
+
+  const sel = document.getElementById('siteLang');
+  function applySiteLang(l) {
+    const dict = NAV_I18N[l] || NAV_I18N.en;
+    const b = document.getElementById('brandText'); if (b) b.textContent = dict.brand;
+    document.querySelectorAll('.nav-links a[data-slug]').forEach(a => { const s = a.getAttribute('data-slug'); if (dict[s]) a.textContent = dict[s]; });
+    const bk = document.getElementById('backAllLink'); if (bk) bk.textContent = dict.back;
+    const f = document.getElementById('footerTagline'); if (f) f.textContent = '© 2026 AI Cost Radar — ' + dict.foot;
+    if (curSlug !== 'index.html' && curSlug !== '') {
+      const h1 = document.querySelector('main h1'); const sub = document.querySelector('main .sub');
+      const pDict = PAGE_I18N[curSlug] && PAGE_I18N[curSlug][l];
+      if (h1) h1.textContent = pDict ? pDict.h1 : origH1;
+      if (sub) sub.textContent = pDict ? pDict.sub : origSub;
+    }
+    const pMap = PHRASE_I18N[l] || {};
+    origNodes.forEach(([node, origText]) => { node.textContent = pMap[origText] ? pMap[origText] : origText; });
+    document.dispatchEvent(new CustomEvent('acr-lang-change', { detail: { lang: l } }));
+  }
+  const savedLang = localStorage.getItem('acr_lang') || (navigator.language.startsWith('ko') ? 'ko' : (navigator.language.startsWith('ja') ? 'ja' : (navigator.language.startsWith('es') ? 'es' : 'en')));
+  if (sel) {
+    sel.value = savedLang;
+    applySiteLang(savedLang);
+    sel.addEventListener('change', (e) => { localStorage.setItem('acr_lang', e.target.value); applySiteLang(e.target.value); });
+  }
+})();
+</script>
+
+</body>
+</html>
