@@ -185,9 +185,9 @@ footer a { color:var(--cyan); text-decoration:none; margin:0 10px; font-weight:6
   <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
     <input id="pickedCodeInput" readonly style="flex:1;min-width:220px;font-family:Consolas,monospace;font-size:18px;font-weight:800;letter-spacing:1px" />
     <button class="btn btn-green" type="button" id="btnCopyPicked">📋 Copy Code</button>
-    <button class="btn btn-ghost" type="button" id="btnMarkUsed">✅ Mark Used (+1)</button>
+    <button class="btn btn-ghost" type="button" id="btnPickAgain">🎲 Pick Another</button>
   </div>
-  <div id="mPickedHint" class="sub" style="margin:10px 0 0;font-size:12.5px">Codes remain active for 30 days or up to 30 uses before auto-expiration.</div>
+  <div id="mPickedHint" class="sub" style="margin:10px 0 0;font-size:12.5px">Codes are shown strictly via fair random draw and auto-expire after 30 days.</div>
 </section>
 
 <section class="card" id="submitCard">
@@ -202,121 +202,91 @@ footer a { color:var(--cyan); text-decoration:none; margin:0 10px; font-weight:6
   </form>
   <div id="museFormMsg" style="display:none;margin-top:12px;padding:10px 14px;border-radius:10px;font-size:13px;font-weight:700"></div>
   <p class="sub" id="mPolicyNote" style="margin:12px 0 0;font-size:12.5px">
-    📌 <strong>Fair Policy:</strong> To prevent malicious deletion of others' codes, manual report-delete is disabled. All codes auto-expire after <strong>30 days</strong> or <strong>30 uses</strong>, and duplicate submissions within 30 days are automatically blocked.
+    📌 <strong>Fair Policy:</strong> The full code list is hidden and manual delete/usage buttons are disabled to prevent abuse. Every code is served strictly via random draw, auto-expires after <strong>30 days</strong>, and duplicates within 30 days are automatically blocked.
   </p>
-</section>
-
-<section class="card">
-  <div class="sec-head">
-    <h2 id="mListTitle">📋 Active Invite Codes (&lt; 30 Days · &lt; 30 Uses)</h2>
-    <button class="btn btn-ghost" type="button" id="btnShuffleList">🔀 Shuffle</button>
-  </div>
-  <div style="overflow-x:auto">
-    <table>
-      <thead><tr><th id="thMCode">Invite Code</th><th id="thMNote">Note</th><th id="thMUse">Uses (Max 30)</th><th id="thMDays">Expires In</th><th id="thMAct">Actions</th></tr></thead>
-      <tbody id="museTbody"></tbody>
-    </table>
-  </div>
 </section>
 
 <section class="card guide">
   <h2 id="mGuideH2">How Meta Muse Invite Code Auto-Expiry Works</h2>
-  <p id="mGuideP">Invite codes typically expire after a set window or after reaching their 30-user limit. This hub enforces an automatic <strong>30-day TTL</strong> and <strong>30-use ceiling</strong> so exhausted codes are automatically phased out without allowing malicious takedowns.</p>
+  <p id="mGuideP">To prevent scraping and malicious takedowns, submitted codes are never listed publicly in bulk. Instead, visitors receive one random active code per click, and every entry is automatically deleted after 30 days.</p>
 </section>
 
 <script>
 (function(){
   const STORAGE_KEY = 'acr_meta_muse_codes_v1';
-  const MAX_DAYS = 30, MAX_USES = 30, DAY_MS = 86400000;
+  const MAX_DAYS = 30, DAY_MS = 86400000;
   const MUSE_I18N = {
     en: {
-      badge:'🎟️ 30-Day Auto-Expiry · Duplicate Guard · Fair Random Picker',
+      badge:'🎟️ Random-Only Fair Draw · 30-Day Auto-Expiry · Duplicate Guard',
       h1:'Meta Muse Invite Code Hub',
-      sub:'Pick a random active invite code or share your own. Codes are safely kept for 30 days before automatic removal, and duplicates within 30 days are automatically flagged.',
-      pick:'🎲 Pick Random Code', goSub:'➕ Submit Your Code', pickedT:'🎉 Recommended Active Code',
-      copy:'📋 Copy Code', used:'✅ Mark Used (+1)', hint:'Codes remain active for 30 days or up to 30 uses before auto-expiration.',
-      subT:'➕ Submit Your Meta Muse Invite Code', active:(n)=>`${n} Active`,
+      sub:'Draw a random active invite code or share yours. Full lists are hidden for fairness, codes auto-expire after 30 days, and duplicate submissions are blocked.',
+      pick:'🎲 Pick Random Code', goSub:'➕ Submit Your Code', pickedT:'🎉 Random Active Invite Code',
+      copy:'📋 Copy Code', again:'🎲 Pick Another', hint:'Codes are served strictly via fair random draw and auto-expire 30 days after submission.',
+      subT:'➕ Submit Your Meta Muse Invite Code', active:(n)=>`${n} Active in Pool`,
       lblC:'Invite Code', lblN:'Note / Nickname (Optional)', btnAdd:'Submit (30-Day TTL)',
-      policy:'📌 Fair Policy: Manual delete/report takedown is disabled to prevent abuse. All codes auto-expire after 30 days or 30 uses, and duplicate codes within 30 days are blocked.',
-      listT:'📋 Active Invite Codes (< 30 Days · < 30 Uses)', shuffle:'🔀 Shuffle',
-      th:['Invite Code','Note','Uses (Max 30)','Expires In','Actions'],
-      empty:'No active invite codes yet. Submit the first code above!',
-      btnC:'Copy', btnU:'Used (+1)',
+      policy:'📌 Fair Policy: The full list is hidden and manual delete/usage buttons are disabled to prevent abuse. Every code is served only via random draw, auto-deletes after 30 days, and duplicates within 30 days are blocked.',
       copied:'📋 Invite code copied: ', shortErr:'⚠️ Please enter a valid code (4+ characters).',
-      dupErr:(d,u)=>`⚠️ This code is already registered! (Expires in D-${d}, Uses ${u}/${MAX_USES})`,
-      added:'✅ Invite code registered! (Kept for 30 days, then auto-deleted.)',
-      noActive:'⚠️ No active codes available yet. Please submit one first!',
-      gH2:'How Meta Muse Invite Code Auto-Expiry Works',
-      gP:'Invite codes expire after 30 days or 30 uses. This hub enforces automatic 30-day TTL and duplicate prevention so exhausted codes rotate out fairly without abuse.'
+      dupErr:(d)=>`⚠️ This code is already registered! (Auto-expires in D-${d})`,
+      added:'✅ Invite code added to the random pool! (Kept for 30 days, then auto-deleted.)',
+      noActive:'⚠️ No active codes in the pool yet. Submit the first code below!',
+      gH2:'How Fair Random Distribution Works',
+      gP:'To prevent scraping and malicious takedowns, submitted codes are never listed in bulk. Visitors draw one random active code at a time, and every entry auto-expires after 30 days.'
     },
     ko: {
-      badge:'🎟️ 30일 자동 보관 · 중복 등록 방지 · 공정한 랜덤 추천',
+      badge:'🎟️ 오직 랜덤 추천 · 30일 자동 보관/삭제 · 중복 등록 차단',
       h1:'메타 Muse(뮤즈) 초대 코드 모음',
-      sub:'활성 초대 코드를 랜덤으로 뽑아 바로 복사하거나 내 코드를 공유하세요. 등록된 코드는 30일간 안전하게 보관 후 자동 삭제되며, 기한 내 중복 등록은 자동 차단됩니다.',
-      pick:'🎲 랜덤 초대코드 뽑기', goSub:'➕ 내 초대코드 등록하기', pickedT:'🎉 추천 활성 초대 코드',
-      copy:'📋 코드 복사', used:'✅ 사용 완료 (+1)', hint:'코드는 등록일로부터 30일간 공정하게 랜덤 노출되며, 30일 경과 또는 30회 사용 시 자동 만료됩니다.',
-      subT:'➕ 내 메타 Muse 초대 코드 등록', active:(n)=>`활성 코드 ${n}개`,
+      sub:'등록된 활성 초대 코드 중 하나를 공정하게 랜덤으로 뽑거나 내 코드를 공유하세요. 전체 목록은 숨김 처리되며, 등록 후 30일이 지나면 자동 삭제되고 기한 내 중복 입력은 차단됩니다.',
+      pick:'🎲 랜덤 초대코드 뽑기', goSub:'➕ 내 초대코드 등록하기', pickedT:'🎉 랜덤 추천 활성 초대 코드',
+      copy:'📋 코드 복사', again:'🎲 다른 코드 뽑기', hint:'악용 방지를 위해 전체 목록과 임의 차감 버튼은 제공하지 않으며, 모든 코드는 30일 뒤 자동 삭제됩니다.',
+      subT:'➕ 내 메타 Muse 초대 코드 등록', active:(n)=>`랜덤 풀 ${n}개 활성`,
       lblC:'초대 코드 (Invite Code)', lblN:'메모 / 닉네임 (선택)', btnAdd:'등록하기 (30일 보관)',
-      policy:'📌 공정 운영 정책: 악의적인 타인 코드 삭제를 막기 위해 임의 신고 삭제는 제외했습니다. 모든 코드는 30일 보관 후 자동 삭제되며, 30일 기한이 남은 동일 코드는 이미 입력된 코드로 자동 안내됩니다.',
-      listT:'📋 활성 초대 코드 목록 (30일 미만 · 30회 미만만 표시)', shuffle:'🔀 순서 섞기',
-      th:['초대 코드','메모','사용 현황 (최대 30회)','남은 보관 기간','동작'],
-      empty:'현재 등록된 활성 초대 코드가 없습니다. 위 입력창에 첫 번째 초대 코드를 등록해 보세요!',
-      btnC:'복사', btnU:'사용(+1)',
-      copied:'📋 초대 코드가 복사되었습니다: ', shortErr:'⚠️ 올바른 초대 코드를 4자 이상 입력해 주세요.',
-      dupErr:(d,u)=>`⚠️ 이미 입력된 코드입니다! (남은 보관 기한: D-${d}, 현재 사용 ${u}/${MAX_USES}회)`,
-      added:'✅ 초대 코드가 등록되었습니다! (30일간 보관 후 자동 삭제됩니다.)',
-      noActive:'⚠️ 현재 등록된 활성 초대 코드가 없습니다. 먼저 코드를 등록해 주세요!',
-      gH2:'메타 Muse 초대 코드 30일 자동 관리 안내',
-      gP:'초대 코드는 30일이 지나거나 30명이 사용하면 소진됩니다. 본 페이지는 30일 자동 만료(TTL)와 중복 차단으로 악의적 삭제 없이 공정하게 활성 코드를 관리합니다.'
+      policy:'📌 공정 운영 정책: 악의적 삭제나 횟수 조작을 막기 위해 목록 공개·삭제·사용완료 버튼을 모두 제거했습니다. 오직 랜덤 뽑기로만 노출되며, 30일 보관 후 자동 삭제되고 30일 내 동일 코드는 이미 입력된 코드로 안내됩니다.',
+      copied:'📋 초대 코드가 클립보드에 복사되었습니다: ', shortErr:'⚠️ 올바른 초대 코드를 4자 이상 입력해 주세요.',
+      dupErr:(d)=>`⚠️ 이미 입력된 코드입니다! (남은 보관 기한: D-${d})`,
+      added:'✅ 랜덤 풀에 초대 코드가 등록되었습니다! (30일간 보관 후 자동 삭제됩니다.)',
+      noActive:'⚠️ 현재 랜덤 풀에 등록된 활성 코드가 없습니다. 아래에서 첫 코드를 등록해 주세요!',
+      gH2:'공정 랜덤 추천 및 30일 자동 삭제 안내',
+      gP:'전체 목록을 공개하면 특정 코드에만 쏠리거나 악용될 수 있어 오직 랜덤 뽑기로만 제공합니다. 모든 코드는 등록 후 30일이 지나면 자동으로 정리됩니다.'
     },
     ja: {
-      badge:'🎟️ 30日間自動保管・重複防止・ランダム抽選',
+      badge:'🎟️ ランダム抽選のみ・30日自動削除・重複防止',
       h1:'Meta Muse 招待コード集',
-      sub:'有効な招待コードをランダム抽選または共有できます。登録から30日または30回使用で自動削除されます。',
-      pick:'🎲 ランダム抽選', goSub:'➕ 招待コードを登録', pickedT:'🎉 おすすめ有効コード',
-      copy:'📋 コピー', used:'✅ 使用済み (+1)', hint:'コードは30日間または最大30回まで有効です。',
-      subT:'➕ 招待コードを登録する', active:(n)=>`有効 ${n}件`,
+      sub:'有効な招待コードをランダムで1件取得または共有できます。一覧は非公開で、登録から30日後に自動削除されます。',
+      pick:'🎲 ランダム抽選', goSub:'➕ 招待コードを登録', pickedT:'🎉 ランダム当選コード',
+      copy:'📋 コピー', again:'🎲 別のコードを引く', hint:'不正防止のため一覧や削除ボタンはなく、30日後に自動削除されます。',
+      subT:'➕ 招待コードを登録する', active:(n)=>`有効プール ${n}件`,
       lblC:'招待コード', lblN:'メモ (任意)', btnAdd:'登録 (30日間保管)',
-      policy:'📌 公正ルール：悪意ある削除を防ぐため通報削除機能はありません。30日経過または30回使用で自動削除され、期間内の重複登録は自動でブロックされます。',
-      listT:'📋 有効な招待コード一覧', shuffle:'🔀 シャッフル',
-      th:['招待コード','メモ','使用回数 (最大30)','残り日数','操作'],
-      empty:'現在登録された有効コードはありません。最初のコードを登録してください！',
-      btnC:'コピー', btnU:'使用(+1)',
+      policy:'📌 公正ルール：悪用防止のためコード一覧・削除・使用済みボタンはありません。ランダム抽選のみで表示され、30日後に自動削除されます。',
       copied:'📋 コピーしました: ', shortErr:'⚠️ 4文字以上の有効なコードを入力してください。',
-      dupErr:(d,u)=>`⚠️ すでに登録済みのコードです！(残り D-${d}、使用 ${u}/${MAX_USES})`,
-      added:'✅ 招待コードを登録しました！(30日後に自動削除されます)',
-      noActive:'⚠️ 有効なコードがまだありません。',
-      gH2:'Meta Muse 招待コード自動管理について',
-      gP:'30日自動期限切れと重複チェックにより、悪用を防ぎつつ有効な招待コードだけを公正に表示します。'
+      dupErr:(d)=>`⚠️ すでに登録済みのコードです！(残り D-${d})`,
+      added:'✅ ランダムプールに登録しました！(30日後に自動削除されます)',
+      noActive:'⚠️ 現在有効なコードがありません。先に登録してください！',
+      gH2:'ランダム抽選と30日自動削除について',
+      gP:'不正利用や偏りを防ぐため、招待コードは一覧表示せずランダム抽選のみで提供し、30日経過後に自動削除します。'
     },
     es: {
-      badge:'🎟️ Auto-Expiración 30 Días · Anti-Duplicados · Selector Aleatorio',
+      badge:'🎟️ Solo Sorteo Aleatorio · Auto-Expiración 30 Días · Anti-Duplicados',
       h1:'Códigos de Invitación Meta Muse',
-      sub:'Obtén un código activo al azar o comparte el tuyo. Los códigos duran 30 días o 30 usos y los duplicados se bloquean automáticamente.',
-      pick:'🎲 Código Aleatorio', goSub:'➕ Publicar Código', pickedT:'🎉 Código Activo Recomendado',
-      copy:'📋 Copiar', used:'✅ Usado (+1)', hint:'Los códigos expiran automáticamente tras 30 días o 30 usos.',
-      subT:'➕ Publicar Tu Código Meta Muse', active:(n)=>`${n} Activos`,
+      sub:'Obtén un código activo al azar o comparte el tuyo. La lista completa está oculta para evitar abusos y cada código expira a los 30 días.',
+      pick:'🎲 Código Aleatorio', goSub:'➕ Publicar Código', pickedT:'🎉 Código Activo Aleatorio',
+      copy:'📋 Copiar', again:'🎲 Otro Código', hint:'Solo se muestra mediante sorteo aleatorio justo y expira automáticamente a los 30 días.',
+      subT:'➕ Publicar Tu Código Meta Muse', active:(n)=>`${n} Activos en Pool`,
       lblC:'Código de Invitación', lblN:'Nota (Opcional)', btnAdd:'Publicar (30 Días)',
-      policy:'📌 Política Justa: Sin eliminación maliciosa por reportes. Todos los códigos expiran en 30 días o 30 usos y se bloquean duplicados.',
-      listT:'📋 Códigos Activos (< 30 Días · < 30 Usos)', shuffle:'🔀 Mezclar',
-      th:['Código','Nota','Usos (Máx 30)','Expira en','Acciones'],
-      empty:'Aún no hay códigos activos. ¡Publica el primero arriba!',
-      btnC:'Copiar', btnU:'Usado(+1)',
+      policy:'📌 Política Justa: Sin lista pública ni botones de borrado o uso para evitar abusos. Todos los códigos expiran en 30 días y se bloquean duplicados.',
       copied:'📋 Código copiado: ', shortErr:'⚠️ Introduce un código válido (4+ caracteres).',
-      dupErr:(d,u)=>`⚠️ ¡Este código ya está registrado! (Expira en D-${d}, Usos ${u}/${MAX_USES})`,
-      added:'✅ ¡Código registrado por 30 días!',
-      noActive:'⚠️ No hay códigos activos todavía.',
-      gH2:'Cómo Funciona la Auto-Expiración de 30 Días',
-      gP:'Cada código permanece activo 30 días o hasta 30 usos, evitando abusos y códigos duplicados.'
+      dupErr:(d)=>`⚠️ ¡Este código ya está registrado! (Expira en D-${d})`,
+      added:'✅ ¡Código añadido al pool aleatorio por 30 días!',
+      noActive:'⚠️ No hay códigos activos todavía. ¡Publica el primero abajo!',
+      gH2:'Cómo Funciona el Sorteo Aleatorio Justo',
+      gP:'Para evitar abusos, los códigos nunca se listan públicamente; se entregan uno a uno al azar y se eliminan automáticamente tras 30 días.'
     }
   };
 
   let curL = localStorage.getItem('acr_lang') || (navigator.language.startsWith('ko') ? 'ko' : (navigator.language.startsWith('ja') ? 'ja' : (navigator.language.startsWith('es') ? 'es' : 'en')));
   let items = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  let pickedId = null;
+  let pickedCode = '';
 
   const t = () => MUSE_I18N[curL] || MUSE_I18N.en;
-  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const normCode = s => String(s ?? '').trim().replace(/\s+/g, '').toUpperCase();
 
   function applyMuseLang() {
@@ -328,18 +298,16 @@ footer a { color:var(--cyan); text-decoration:none; margin:0 10px; font-weight:6
     document.getElementById('btnGoSubmit').textContent = d.goSub;
     document.getElementById('mPickedTitle').textContent = d.pickedT;
     document.getElementById('btnCopyPicked').textContent = d.copy;
-    document.getElementById('btnMarkUsed').textContent = d.used;
+    document.getElementById('btnPickAgain').textContent = d.again;
     document.getElementById('mPickedHint').textContent = d.hint;
     document.getElementById('mSubmitTitle').textContent = d.subT;
     document.getElementById('mLblCode').textContent = d.lblC;
     document.getElementById('mLblNote').textContent = d.lblN;
     document.getElementById('mBtnAdd').textContent = d.btnAdd;
     document.getElementById('mPolicyNote').textContent = d.policy;
-    document.getElementById('mListTitle').textContent = d.listT;
-    document.getElementById('btnShuffleList').textContent = d.shuffle;
-    ['thMCode','thMNote','thMUse','thMDays','thMAct'].forEach((id, i) => { document.getElementById(id).textContent = d.th[i]; });
     document.getElementById('mGuideH2').textContent = d.gH2;
     document.getElementById('mGuideP').textContent = d.gP;
+    document.getElementById('mActiveCount').textContent = d.active(items.length);
   }
 
   function showFormMsg(text, isError) {
@@ -353,70 +321,45 @@ footer a { color:var(--cyan); text-decoration:none; margin:0 10px; font-weight:6
 
   function pruneExpired() {
     const now = Date.now(), before = items.length;
-    items = items.filter(it => ((now - Number(it.createdAt || 0)) / DAY_MS) < MAX_DAYS && Number(it.uses || 0) < MAX_USES);
+    items = items.filter(it => ((now - Number(it.createdAt || 0)) / DAY_MS) < MAX_DAYS);
     if (items.length !== before) save();
   }
   function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
   function daysLeft(createdAt) { return Math.max(0, Math.ceil(MAX_DAYS - ((Date.now() - Number(createdAt || Date.now())) / DAY_MS))); }
 
-  function render() {
-    applyMuseLang();
+  function pickRandom() {
     pruneExpired();
-    const d = t();
-    document.getElementById('mActiveCount').textContent = d.active(items.length);
-    const tbody = document.getElementById('museTbody');
-    if (!items.length) {
-      tbody.innerHTML = `<tr><td colspan="5" style="color:var(--muted)">${d.empty}</td></tr>`;
-      return;
-    }
-    tbody.innerHTML = items.map(it => {
-      const dl = daysLeft(it.createdAt), pct = Math.min(100, Math.round((it.uses / MAX_USES) * 100));
-      return `<tr>
-        <td><code style="font-size:14px;font-weight:800;color:var(--cyan)">${esc(it.code)}</code></td>
-        <td style="color:var(--muted)">${esc(it.note || '-')}</td>
-        <td><strong>${it.uses} / ${MAX_USES}</strong><div style="height:6px;width:96px;background:var(--input-bg);border-radius:999px;overflow:hidden;margin-top:3px"><div style="height:100%;width:${pct}%;background:${pct>=80?'var(--amber)':'var(--green)'}"></div></div></td>
-        <td><span class="pill p-free">D-${dl}</span></td>
-        <td style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn btn-green" style="padding:5px 10px;font-size:12px" onclick="museCopy('${it.id}')">${d.btnC}</button>
-          <button class="btn btn-ghost" style="padding:5px 10px;font-size:12px" onclick="museUse('${it.id}')">${d.btnU}</button>
-        </td>
-      </tr>`;
-    }).join('');
+    applyMuseLang();
+    if (!items.length) { showFormMsg(t().noActive, true); return; }
+    const pick = items[Math.floor(Math.random() * items.length)];
+    pickedCode = pick.code;
+    document.getElementById('pickedCodeInput').value = pick.code;
+    document.getElementById('mPickedMeta').textContent = (pick.note ? pick.note + ' · ' : '') + `D-${daysLeft(pick.createdAt)}`;
+    document.getElementById('randomResultCard').style.display = 'block';
+    document.getElementById('randomResultCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
-
-  window.museCopy = (id) => { const it = items.find(x => x.id === id); if (!it) return; navigator.clipboard.writeText(it.code); showFormMsg(t().copied + it.code, false); };
-  window.museUse = (id) => { const it = items.find(x => x.id === id); if (!it) return; it.uses = Number(it.uses || 0) + 1; save(); render(); if (pickedId === id && it.uses >= MAX_USES) document.getElementById('randomResultCard').style.display = 'none'; };
 
   document.getElementById('museForm').onsubmit = (e) => {
     e.preventDefault(); pruneExpired();
     const rawCode = document.getElementById('inCode').value.trim(), note = document.getElementById('inNote').value.trim();
     if (rawCode.length < 4) { showFormMsg(t().shortErr, true); return; }
     const dup = items.find(x => normCode(x.code) === normCode(rawCode));
-    if (dup) { showFormMsg(t().dupErr(daysLeft(dup.createdAt), dup.uses), true); return; }
-    items.unshift({ id: crypto.randomUUID(), code: rawCode, note, uses: 0, createdAt: Date.now() });
-    save(); render(); showFormMsg(t().added, false); e.target.reset();
+    if (dup) { showFormMsg(t().dupErr(daysLeft(dup.createdAt)), true); return; }
+    items.unshift({ id: crypto.randomUUID(), code: rawCode, note, createdAt: Date.now() });
+    save(); applyMuseLang(); showFormMsg(t().added, false); e.target.reset();
   };
 
-  document.getElementById('btnPickRandom').onclick = () => {
-    pruneExpired();
-    if (!items.length) { showFormMsg(t().noActive, true); return; }
-    const pick = items[Math.floor(Math.random() * items.length)];
-    pickedId = pick.id;
-    document.getElementById('pickedCodeInput').value = pick.code;
-    document.getElementById('mPickedMeta').textContent = `${pick.uses}/${MAX_USES} · D-${daysLeft(pick.createdAt)}`;
-    document.getElementById('randomResultCard').style.display = 'block';
-    document.getElementById('randomResultCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  document.getElementById('btnPickRandom').onclick = pickRandom;
+  document.getElementById('btnPickAgain').onclick = pickRandom;
+  document.getElementById('btnCopyPicked').onclick = () => {
+    if (!pickedCode) return;
+    navigator.clipboard.writeText(pickedCode);
+    showFormMsg(t().copied + pickedCode, false);
   };
-  document.getElementById('btnCopyPicked').onclick = () => { if (pickedId) window.museCopy(pickedId); };
-  document.getElementById('btnMarkUsed').onclick = () => {
-    if (!pickedId) return; window.museUse(pickedId);
-    const it = items.find(x => x.id === pickedId);
-    if (it) document.getElementById('mPickedMeta').textContent = `${it.uses}/${MAX_USES} · D-${daysLeft(it.createdAt)}`;
-  };
-  document.getElementById('btnShuffleList').onclick = () => { for (let i = items.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [items[i], items[j]] = [items[j], items[i]]; } render(); };
 
-  document.addEventListener('acr-lang-change', (e) => { curL = e.detail.lang; render(); });
-  render();
+  document.addEventListener('acr-lang-change', (e) => { curL = e.detail.lang; pruneExpired(); applyMuseLang(); });
+  pruneExpired();
+  applyMuseLang();
 })();
 </script>
 </main>
